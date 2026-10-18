@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "checking for new files to backup..."
-echo
 sleep 2
 
 SH_FILES=$( find -name "*.sh" -mtime -1 )
@@ -34,3 +32,5 @@ if [[ -n $( git status -s ) ]]; then
     git commit -m "Automated commit"
     git push git@github.com:pynux-droid/Tabby.git
 fi
+
+clear
