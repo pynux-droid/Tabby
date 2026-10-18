@@ -32,5 +32,3 @@ if [[ -n $( git status -s ) ]]; then
     git commit -m "Automated commit"
     git push git@github.com:pynux-droid/Tabby.git
 fi
-
-clear
