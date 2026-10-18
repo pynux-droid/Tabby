@@ -30,7 +30,7 @@ cd ~/projects
 if [[ -n $( git status -s ) ]]; then
     git add -A
     git commit -m "Automated commit"
-    git pull git@github.com:pynux-droid/Tabby.git
-    git push --rebase git@github.com:pynux-droid/Tabby.git
+    git pull --rebase git@github.com:pynux-droid/Tabby.git
+    git push  git@github.com:pynux-droid/Tabby.git
     git push git@github.com:pynux-droid/Tabby.git
 fi
