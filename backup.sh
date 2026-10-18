@@ -31,4 +31,4 @@ rclone copy backups Mydrive:projects
 cd projects
 git add -A
 git commit
-#git push 
+git push https://github.com/pynux-droid/Tabby.git
