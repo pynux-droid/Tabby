@@ -26,9 +26,11 @@ if [[ $PY_COUNT -gt 0 ]]; then
     done
 fi
 
-rclone copy backups Mydrive:projects
+rclone copy ~/backups Mydrive:projects
 
-cd projects
-git add -A
-git commit
-git push https://github.com/pynux-droid/Tabby.git
+cd ~/projects
+if [[ -n $( git status -s ) ]]; then
+    git add -A
+    git commit -m "Automated commit"
+    git push git@github.com:pynux-droid/Tabby.git
+fi
