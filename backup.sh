@@ -30,7 +30,7 @@ do
 done
 
 cd ~/projects
-git pull --rebase origin main
+git pull origin main
 if [[ -n $( git status -s ) ]]; then
     git add -A
     git commit -m "Automated commit"
