@@ -9,14 +9,14 @@ PY_COUNT=$( find -name "*.py" -mtime -1 | wc -l )
 if [[ $BASH_COUNT -gt 0 ]]; then
     for SH_FILE in $SH_FILES
     do
-        cp $SH_FILE ~/backups
+        cp -v $SH_FILE ~/backups
     done
 fi
 
 if [[ $PY_COUNT -gt 0 ]]; then
     for PY_FILE in $PY_FILES
     do
-        cp $PY_FILE ~/backups
+        cp -v $PY_FILE ~/backups
     done
 fi
 
