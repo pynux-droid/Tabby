@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sleep 2
-
 SH_FILES=$( find -name "*.sh" -mtime -1 )
 PY_FILES=$( find -name "*.py" -mtime -1 )
 
@@ -12,7 +10,6 @@ if [[ $BASH_COUNT -gt 0 ]]; then
     for SH_FILE in $SH_FILES
     do
         cp $SH_FILE ~/backups
-        cp $SH_FILE ~/projects
     done
 fi
 
@@ -20,16 +17,22 @@ if [[ $PY_COUNT -gt 0 ]]; then
     for PY_FILE in $PY_FILES
     do
         cp $PY_FILE ~/backups
-        cp $PY_FILE ~/projects
     done
 fi
 
 rclone copy ~/backups Mydrive:projects
 
+cd ~/backups
+FILES=$(ls -v)
+for file in $FILES
+do
+    cp -v $file  ~/projects
+done
+
 cd ~/projects
+git pull --rebase origin main
 if [[ -n $( git status -s ) ]]; then
     git add -A
     git commit -m "Automated commit"
-    git pull --rebase git@github.com:pynux-droid/Tabby.git
-    git push git@github.com:pynux-droid/Tabby.git
+    git push origin main
 fi
