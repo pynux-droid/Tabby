@@ -1,6 +1,5 @@
 #!/bin/env python
 
-
 import time
 import threading
 from neonize.events import ConnectedEv
