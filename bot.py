@@ -33,7 +33,6 @@ def context_mgr():
         )
     conn.commit()
     conn.close()
-    return
 
 def chat_hist():
      chat_history = []
