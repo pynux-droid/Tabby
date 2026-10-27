@@ -5,36 +5,43 @@ import json
 import sqlite3
 import requests as r
 
-msgs = {}
+
 api_key = os.environ.get("GROQ_API_KEY")
 url = "https://api.groq.com/openai/v1/chat/completions"
 
-def create_db():
-    conn = sqlite3.connect("context.db")
-    cur = conn.cursor()
+conn = sqlite3.connect("context.db")
+cur = conn.cursor()
 
+msgs = {}
+
+def main() -> None:
+    create_tables()
+    chat_hist()
+
+
+def create_tables() -> None:
     cur.execute(
     """CREATE TABLE IF NOT EXISTS chats(CHAT_ID INTEGER PRIMARY KEY AUTOINCREMENT,
     SENDER TEXT NOT NULL,
     MESSAGE TEXT NOT NULL)"""
     )
-    conn.close()
-    return
 
-def context_mgr():
-    conn = sqlite3.connect("context.db")
-    cur = conn.cursor()
 
-    for key, value in msgs.items():
-        if not key or not value:
-            continue
-        cur.execute(
-        """INSERT INTO chats(SENDER, MESSAGE) VALUES(?, ?)""",(key, value,)
-        )
-    conn.commit()
-    conn.close()
+def context_mgr() -> None:
+    try:
+        for key, value in msgs.items():
+            if not key or not value:
+                continue
+            cur.execute(
+            """INSERT INTO chats(SENDER, MESSAGE) VALUES(?, ?)""",(key, value,)
+            )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
 
-def chat_hist():
+
+def chat_hist() -> list:
      chat_history = []
      msg = input("type here...")
      if msg.lower() == "bye":
@@ -42,13 +49,10 @@ def chat_hist():
      else:
          msgs["user"] = msg
 
-     conn = sqlite3.connect("context.db")
-     cur = conn.cursor()
      cur.execute(
      """SELECT SENDER, MESSAGE FROM chats ORDER BY CHAT_ID DESC LIMIT 10"""
      )
      rows = cur.fetchall()
-     conn.close()
 
      for row in reversed(rows):
          chat_history.append({"role":row[0], "content":row[1]})
@@ -59,7 +63,8 @@ def chat_hist():
      get_resp(prompt)
      return prompt
 
-def get_resp(prompt):
+
+def get_resp(prompt) -> None:
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
@@ -89,11 +94,12 @@ def get_resp(prompt):
         chat_hist()
 
     except r.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-        print(f"Response body: {response.text}")
+        raise http_err
     except Exception as err:
-        print(f"An error occurred: {err}")
+        raise err
 
 if __name__ == "__main__":
-    create_db()
-    chat_hist()
+    try:
+        main()
+    finally:
+        conn.close()
